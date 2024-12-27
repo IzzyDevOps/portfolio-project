@@ -13,6 +13,7 @@
 </head>
 <body class="main-content">
     <div class="logo">
+        <a href="home" class="home-link"></a>
         <!-- Insert the SVG logo here -->
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
             <!-- Background Circle -->
@@ -67,7 +68,7 @@
                 <h2 class="title">Frontend Developer | Cybersecurity Enthusiast</h2>
                 <p class="introduction">
                     Passionate about creating seamless digital experiences and ensuring robust security measures. 
-                    <!--Specializing in modern web development with a keen focus on user-centric design and cybersecurity best practices.-->
+                    Specializing in modern web development with a keen focus on user-centric design and cybersecurity best practices.
                 </p>
                 <div class="btn-con">
                     <a href="#" class="main-btn">
@@ -99,9 +100,9 @@
                             Currently exploring opportunities in cybersecurity and collaboration, I’m always open to new challenges!
                         </p>
                         <div class="tab-titles">
-                            <p class="tab-links active-link" onclick="opentab('skills')">Skills</p>
-                            <p class="tab-links" onclick="opentab('experience')">Experience</p>
-                            <p class="tab-links" onclick="opentab('education')">Education</p>
+                            <p class="tab-links active-link" onclick="opentab('skills', event)">Skills</p>
+<p class="tab-links" onclick="opentab('experience', event)">Experience</p>
+<p class="tab-links" onclick="opentab('education', event)">Education</p>
                         </div>
                         <div class="tab-contents active-tab" id="skills">
                             <ul>
@@ -289,7 +290,7 @@
             </div>
             
             <div class="contact-right">
-                <form name="submit-to-google-sheet">
+                <form name="submit-to-google-sheet" id="contactForm">
                     <div class="form-group">
                         <input type="text" name="name" placeholder="Your Name" required>
                     </div>
@@ -300,7 +301,7 @@
                         <input type="text" name="subject" placeholder="Subject" required>
                     </div>
                     <div class="form-group">
-                        <textarea name="message" rows="6" placeholder="Your Message"></textarea>
+                        <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
                     </div>
                     <button type="submit" class="main-btn">
                         <span class="btn-text">Send Message</span>
@@ -377,12 +378,13 @@
     </div>
 
     <!-- Scripts -->
-    <script defer src="app.js"></script>
+    <script src="app.js"></script>
     <script>
         var tablinks = document.getElementsByClassName("tab-links");
         var tabcontents = document.getElementsByClassName("tab-contents");
 
-        function opentab(tabname){
+        function opentab(tabname, event){
+            event.preventDefault();
             for(tablink of tablinks){
                 tablink.classList.remove("active-link");
             }
@@ -394,22 +396,23 @@
         }
     </script>
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxdZ9jvyuWyfJkIGu97zUBhabRjFv1eaWeCNEjs0xD6_R9e82Eq5GXGjYdLxlZYChQ/exec'
-        const form = document.forms['submit-to-google-sheet']
-        const msg = document.getElementById("msg")
-      
-        form.addEventListener('submit', e => {
-          e.preventDefault()
-          fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => {
-                msg.innerHTML = "Message sent successfully"
-                setTimeout(function(){
-                    msg.innerHTML = ""
-                },5000)
-                form,reset()
-            })
-            .catch(error => console.error('Error!', error.message))
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxdZ9jvyuWyfJkIGu97zUBhabRjFv1eaWeCNEjs0xD6_R9e82Eq5GXGjYdLxlZYChQ/exec';
+const form = document.forms['submit-to-google-sheet'];
+const msg = document.getElementById("msg");
+
+form.addEventListener('submit', e => {
+    e.preventDefault();
+    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+        .then(response => {
+            msg.style.display = "block";
+            msg.innerHTML = "Message sent successfully";
+            setTimeout(() => {
+                msg.style.display = "none";
+            }, 5000);
+            form.reset();
         })
+        .catch(error => console.error('Error!', error.message));
+});
       </script>
 
 <script>
@@ -417,6 +420,53 @@
         const loader = document.querySelector('.loader');
         loader.classList.add('hidden');
     });
+    </script>
+
+<script>
+    // Handle browser navigation
+    window.addEventListener('popstate', function(event) {
+        if (event.state) {
+            document.querySelector('.active').classList.remove('active');
+            document.querySelector('.active-btn').classList.remove('active-btn');
+            
+            const section = document.querySelector(event.state.section);
+            const button = document.querySelector(`[data-id="${event.state.section.substring(1)}"]`);
+            
+            section.classList.add('active');
+            button.classList.add('active-btn');
+        }
+    });
+    
+    // Modify existing click handlers for controls
+    document.querySelectorAll('.control').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelector('.active-btn').classList.remove('active-btn');
+            this.classList.add('active-btn');
+    
+            document.querySelector('.active').classList.remove('active');
+            const id = this.dataset.id;
+            document.getElementById(id).classList.add('active');
+            
+            // Add browser history entry
+            history.pushState({ section: `#${id}` }, '', `#${id}`);
+        });
+    });
+    
+    // Handle logo click
+    document.querySelector('.home-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        document.querySelector('.active').classList.remove('active');
+        document.querySelector('.active-btn').classList.remove('active-btn');
+        
+        document.getElementById('home').classList.add('active');
+        document.querySelector('[data-id="home"]').classList.add('active-btn');
+        
+        history.pushState({ section: '#home' }, '', '#home');
+    });
+    
+    // Set initial history state
+    history.replaceState({ section: '#home' }, '', '#home');
     </script>
 
 
