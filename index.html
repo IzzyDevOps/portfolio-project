@@ -418,9 +418,12 @@ form.addEventListener('submit', e => {
 <script>
     window.addEventListener('load', () => {
         const loader = document.querySelector('.loader');
-        loader.classList.add('hidden');
+        setTimeout(() => {
+            loader.classList.add('hidden'); // Hide after 4 seconds
+        }, 3000); // 4-second delay
     });
-    </script>
+</script>
+
 
 <script>
     // Handle browser navigation
